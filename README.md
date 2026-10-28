@@ -4,7 +4,7 @@ A real form backend for `Personality Quest.html`. Public visitors may submit a n
 
 ## Run locally
 
-1. Copy `.env.example` to `.env`.
+1. Copy `.env.example` to `.env` for local development. The file is optional in production; Render supplies the configured values as environment variables.
 2. Replace `ADMIN_PASSWORD` with a password of at least 12 characters.
 3. Install dependencies and start:
 
