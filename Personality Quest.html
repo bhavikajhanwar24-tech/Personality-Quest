@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Personality Quest</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap">
+<style>
+:root{--ink:#2b2350;--mute:#6d6896;--card:#fff;--line:#e6e1fb;--p:#7c5cff;--bg:linear-gradient(160deg,#ffe9f3,#e8e4ff 50%,#dff6ff);
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--ink:#f1eeff;--mute:#b3add9;--card:#2a2450;--line:#443d7a;--bg:linear-gradient(160deg,#241b45,#1d1a3d 50%,#142a3d)}}
+:root[data-theme="dark"]{--ink:#f1eeff;--mute:#b3add9;--card:#2a2450;--line:#443d7a;--bg:linear-gradient(160deg,#241b45,#1d1a3d 50%,#142a3d)}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;min-height:100vh;background:var(--bg);color:var(--ink);font-family:"Fredoka","Trebuchet MS",system-ui,sans-serif;line-height:1.45}
+main{max-width:640px;margin:0 auto;padding:18px 16px 50px}
+.screen{display:none}.screen.on{display:block;animation:pop .35s ease}
+@keyframes pop{from{opacity:0;transform:translateY(14px) scale(.98)}to{opacity:1;transform:none}}
+.hero{text-align:center;padding:26px 8px 6px}
+.hero .big{font-size:4.2rem;line-height:1;display:inline-block;animation:bob 2.4s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-10px) rotate(6deg)}}
+h1{font-size:2.3rem;line-height:1.1;margin:10px 0 8px;font-weight:700}
+.lead{color:var(--mute);max-width:440px;margin:0 auto 18px;font-size:1.05rem}
+.card{background:var(--card);border-radius:24px;padding:22px 18px;box-shadow:0 8px 0 var(--line)}
+label.nick{display:block;text-align:left;font-weight:600;margin-bottom:6px}
+input[type=text]{width:100%;font:inherit;padding:13px 16px;border-radius:14px;border:2px solid var(--line);background:transparent;color:var(--ink)}
+input[type=text]:focus{outline:3px solid var(--p);border-color:var(--p)}
+.hint{font-size:.85rem;color:var(--mute);margin:6px 0 16px;text-align:left}
+.btn{font:inherit;font-weight:700;font-size:1.1rem;border:0;border-radius:16px;padding:14px 26px;background:var(--p);color:#fff;cursor:pointer;box-shadow:0 5px 0 #4f37c4;transition:transform .1s,box-shadow .1s}
+.btn:active{transform:translateY(4px);box-shadow:0 1px 0 #4f37c4}
+.btn:focus-visible,.face:focus-visible{outline:3px solid var(--ink);outline-offset:3px}
+.btn.alt{background:transparent;color:var(--p);box-shadow:none;border:2px solid var(--p)}
+.top{display:flex;align-items:center;gap:10px;margin-bottom:16px}
+.track{flex:1;height:16px;border-radius:10px;background:var(--line);position:relative}
+.fill{height:100%;border-radius:10px;background:linear-gradient(90deg,#ff8ab3,#7c5cff);width:0;transition:width .35s}
+.rocket{position:absolute;top:-9px;left:0;font-size:1.4rem;transition:left .35s;transform:translateX(-50%)}
+.cnt{font-weight:600;color:var(--mute);min-width:48px;text-align:right}
+.part{display:inline-block;padding:5px 14px;border-radius:20px;font-weight:600;font-size:.9rem;background:var(--pc,#ffd6e7);color:#2b2350;margin-bottom:12px}
+.q h2{font-size:1.45rem;line-height:1.3;margin:0 0 22px;font-weight:600}
+.faces{display:flex;justify-content:space-between;align-items:flex-end;gap:4px}
+.face{flex:1;background:none;border:0;cursor:pointer;font:inherit;color:var(--mute);padding:4px 0;text-align:center;transition:transform .15s}
+.face span{display:block;line-height:1.2}
+.face small{display:block;font-size:.68rem;margin-top:4px;min-height:2.2em}
+.face:hover{transform:translateY(-6px) scale(1.1)}
+.face.sel{transform:translateY(-8px) scale(1.18);color:var(--ink);font-weight:700}
+.face.sel span{filter:drop-shadow(0 4px 0 var(--p))}
+.out{animation:out .25s ease forwards}
+@keyframes out{to{opacity:0;transform:translateX(-40px)}}
+.nav{margin-top:16px;text-align:left}
+.decode{text-align:center;padding:60px 10px}
+.decode .big{font-size:4.5rem;display:inline-block;animation:spin 1s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.rcard{border-radius:28px;padding:26px 20px;text-align:center;background:var(--c);color:#241c3f;box-shadow:0 8px 0 rgba(0,0,0,.15)}
+.rcard .em{font-size:4.5rem;line-height:1}
+.rcard .who{font-weight:600;margin-top:6px}
+.rcard .code{font-size:3.4rem;font-weight:700;letter-spacing:.06em;line-height:1.1}
+.rcard .nm{font-size:1.5rem;font-weight:600}
+.rcard .role{opacity:.75;margin:2px 0 10px}
+.panel{background:var(--card);border-radius:20px;padding:16px;margin-top:14px;box-shadow:0 5px 0 var(--line)}
+.panel h3{margin:0 0 8px;font-size:1.1rem}
+.chips{display:flex;flex-wrap:wrap;gap:6px}
+.chip{padding:5px 12px;border-radius:16px;font-size:.92rem;background:var(--line)}
+.chip.s{background:#c9f2d3;color:#14451f}.chip.w{background:#ffe0c9;color:#5a2a0a}
+.dim{margin:10px 0}.dim .l{display:flex;justify-content:space-between;font-weight:600;font-size:.9rem}
+.dim .t{height:12px;border-radius:8px;background:var(--line);overflow:hidden}.dim .a{height:100%;background:var(--p);border-radius:8px}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.grid div{border-radius:12px;padding:6px 2px;text-align:center;font-size:.7rem;color:#241c3f;background:var(--c);opacity:.45}
+.grid div b{display:block;font-size:.95rem}.grid .me{opacity:1;transform:scale(1.08);outline:3px solid var(--ink)}
+.teacher{margin-top:16px;border:3px dashed var(--p);border-radius:18px;padding:12px 14px;font-size:.95rem;background:var(--card)}
+.teacher b{font-size:1.3rem}.teacher:not([hidden]){display:block}
+#cv{position:fixed;inset:0;pointer-events:none;z-index:20}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<canvas id="cv"></canvas>
+<main>
+<section id="start" class="screen on">
+  <div class="hero"><span class="big">🔮</span><h1>Personality Quest</h1>
+  <p class="lead">20 quick questions about you and the world around you. Tap the face that fits best, and discover which of 16 personality types you are!</p></div>
+  <div class="card">
+    <label class="nick" for="nick">What should we call you?</label>
+    <input type="text" id="nick" maxlength="20" placeholder="Your first name or a nickname" autocomplete="off">
+    <p class="hint">Optional. This name is stored with your result so the form owner can identify submissions.</p>
+    <button class="btn" id="begin">Start the quest 🚀</button>
+  </div>
+  <p id="publicSaveStatus" class="hint" style="text-align:center"></p>
+</section>
+
+<section id="quiz" class="screen">
+  <div class="top"><div class="track"><div class="fill" id="fill"></div><span class="rocket" id="rocket">🚀</span></div><div class="cnt" id="cnt">1/20</div></div>
+  <div class="card q" id="qcard"></div>
+  <div class="nav"><button class="btn alt" id="back">← Back</button></div>
+</section>
+
+<section id="decode" class="screen"><div class="decode"><span class="big">🔮</span><h1>Reading your answers…</h1><p class="lead" id="dtxt">Mixing your answers together</p></div></section>
+
+<section id="result" class="screen"></section>
+</main>
+<script>
+const SOC=["You think people often behave differently when they are in a group than when they are alone.","Your family and upbringing influence many of the choices you make.","You sometimes adopt habits, expressions, or trends because people around you use them.","You think people can have very different views of the same situation because of their backgrounds.","Social media influences what people consider popular or acceptable.","You believe the people someone spends time with can influence their choices over time.","You sometimes change how you express yourself depending on whom you are talking to.","Traditions and cultural practices influence how people live their everyday lives.","You think people are sometimes judged unfairly because of their background or social status.","When joining a new group, you tend to observe how people behave before becoming comfortable.","You enjoy understanding why certain trends become popular in some communities.","You think society’s expectations can influence the careers and lifestyles people choose.","You believe that people in a community depend on one another more than they realise.","When a group makes a decision, the opinions of a few influential people can affect everyone else.","You think people should have equal opportunities regardless of their social background."];
+const PSY=["When solving a problem, you usually prefer logical reasoning over creative brainstorming.","You feel more energised after spending time with other people than after spending time alone.","When learning something new, you are more interested in possibilities and imaginative ideas than practical details.","When making an important decision, you give greater importance to people’s feelings than to purely logical analysis.","You prefer to plan your activities in advance rather than go with the flow."];
+const Q=SOC.map(t=>({t,p:0})).concat(PSY.map(t=>({t,p:1})));
+const PART=[["🌍 Part 1: Society Explorer","#ffd6e7"],["🧠 Part 2: Inner You","#cfe8ff"]];
+const FACES=["🤩","🙂","😐","🙁","😖"],LABELS=["Strongly agree","Agree","Neutral","Disagree","Strongly disagree"],VAL=[2,1,0,-1,-2],SZ=["2.9rem","2.4rem","2rem","2.4rem","2.9rem"];
+const COL={NF:"#8fdc7f",NT:"#7cc4f0",SF:"#f7e05a",ST:"#f4956d"},ROLE={NF:"Diplomat / Idealist",NT:"Analyst / Rational",SF:"Helper / Caretaker",ST:"Doer / Organiser"};
+// code:[name, emoji, description, strengths, weaknesses, careers]
+const T={
+ENFJ:["Teacher","🐬","Smooth-talking charmer who inspires and motivates others. Great with people and a natural leader.",["Inspiring","Empathetic","Organised"],["Too idealistic","Takes criticism hard"],"Teaching, coaching, counselling, HR, community leadership"],
+INFJ:["Counselor","🦋","Quiet and inspiring, with a strong sense of idealism. Not just a dreamer, but able to take real action.",["Creative","Insightful","Determined"],["Very private","Perfectionist","Burns out easily"],"Counselling, psychology, medicine, life coaching"],
+INTJ:["Mastermind","🦅","A strategic thinker who sees how things will go. Independent, with very high standards.",["Strategic","Independent","Knowledgeable"],["Can seem arrogant","Critical"],"Science, engineering, strategy, research"],
+ENTJ:["Field Marshal","🦁","A natural leader: direct, decisive and great at organising people and plans.",["Confident","Efficient","Charismatic"],["Impatient","Stubborn"],"Management, law, entrepreneurship, politics"],
+ENFP:["Champion","🦄","Enthusiastic and creative, great with groups and full of ideas and possibilities.",["Curious","Energetic","Warm"],["Easily distracted","Dislikes routine"],"Journalism, design, marketing, the arts"],
+INFP:["Healer","🕊️","Idealistic and gentle, guided by deep values and a wish to help people.",["Empathetic","Creative","Open-minded"],["Self-critical","Avoids conflict"],"Writing, therapy, social work, art"],
+INTP:["Architect","🦉","A deep thinker who loves theories, puzzles and logical problem solving.",["Analytical","Original","Curious"],["Absent-minded","Overthinks"],"Research, programming, philosophy, science"],
+ENTP:["Inventor","🦊","Quick-witted and energised by challenge. Loves debating ideas and finding new ways to do things.",["Quick thinker","Resourceful","Original"],["Argumentative","Dislikes routine"],"Entrepreneurship, law, innovation, marketing"],
+ESFP:["Performer","🦜","Fun, spontaneous and generous. Brings energy and enthusiasm wherever they go.",["Bold","Friendly","Practical"],["Dislikes planning","Easily bored"],"Entertainment, hospitality, events, sales"],
+ISFP:["Composer","🦚","Quietly harmonious and kind, with a love of beauty and nature.",["Gentle","Artistic","Loyal"],["Very private","Avoids planning"],"Art, music, design, healthcare, animal care"],
+ISTP:["Operator","🐆","Ready for anything, calm in a crisis, and a hands-on problem solver.",["Calm","Practical","Resourceful"],["Reserved","Risk-prone"],"Mechanics, engineering, emergency services, IT"],
+ESTP:["Promoter","🐯","Excitement seeker who thrives in the moment and is quick to act.",["Energetic","Persuasive","Direct"],["Impatient","Risk-taking"],"Sales, sports, entrepreneurship, negotiation"],
+ESFJ:["Provider","🐘","Warm, gracious host who notices what others need and brings people together.",["Caring","Loyal","Sociable"],["Needs approval","Resists change"],"Healthcare, teaching, event planning, hospitality"],
+ISFJ:["Protector","🐢","Kind, humble guardian who protects traditions and loves helping others.",["Supportive","Reliable","Patient"],["Overworks","Shy about needs"],"Nursing, teaching, social work, libraries"],
+ISTJ:["Inspector","🐜","Does what should be done. Great at finishing practical details, with a strong sense of duty.",["Responsible","Honest","Organised"],["Rigid","Stubborn"],"Accounting, auditing, logistics, public service"],
+ESTJ:["Supervisor","🐝","A pillar of the community: loyal, dependable and orderly, often in charge.",["Dedicated","Direct","Loyal"],["Inflexible","Judgmental"],"Management, administration, finance, law"]};
+const $=id=>document.getElementById(id);
+const grp=c=>c[1]=="N"?(c[2]=="F"?"NF":"NT"):(c[2]=="F"?"SF":"ST");
+let idx=0,ans=Array(20).fill(null),nick="",saved=false;
+function show(id){document.querySelectorAll(".screen").forEach(s=>s.classList.toggle("on",s.id==id));window.scrollTo(0,0)}
+function renderQ(){
+  const q=Q[idx],p=PART[q.p];
+  $("qcard").classList.remove("out");
+  $("qcard").innerHTML=`<span class="part" style="--pc:${p[1]}">${p[0]}</span><h2>${q.t}</h2><div class="faces">`+
+   FACES.map((f,i)=>`<button class="face${ans[idx]===VAL[i]?" sel":""}" data-i="${i}" aria-label="${LABELS[i]}"><span style="font-size:${SZ[i]}">${f}</span><small>${LABELS[i]}</small></button>`).join("")+`</div>`;
+  const pc=idx/20*100;$("fill").style.width=pc+"%";$("rocket").style.left=pc+"%";$("cnt").textContent=(idx+1)+"/20";
+  $("back").style.visibility=idx?"visible":"hidden";
+}
+$("qcard").addEventListener("click",e=>{
+  const b=e.target.closest(".face");if(!b)return;
+  ans[idx]=VAL[+b.dataset.i];
+  document.querySelectorAll(".face").forEach(x=>x.classList.toggle("sel",x===b));
+  setTimeout(()=>{
+    if(idx<19){$("qcard").classList.add("out");setTimeout(()=>{idx++;renderQ()},230)}
+    else finish();
+  },260);
+});
+$("back").onclick=()=>{if(idx){idx--;renderQ()}};
+$("begin").onclick=()=>{nick=$("nick").value.trim();idx=0;ans=Array(20).fill(null);saved=false;show("quiz");renderQ()};
+function finish(){
+  $("fill").style.width="100%";$("rocket").style.left="100%";
+  show("decode");
+  const msgs=["Mixing your answers together","Matching you with 16 types","Almost there…"];let k=0;
+  const iv=setInterval(()=>{$("dtxt").textContent=msgs[++k%3]},700);
+  setTimeout(()=>{clearInterval(iv);result()},2200);
+}
+function result(){
+  const a=n=>ans[n-1];
+  const ei=a(17),sn=a(18),tf=a(16)-a(19),jp=a(20);
+  const code=(ei>0?"E":"I")+(sn>0?"N":"S")+(tf>0?"T":"F")+(jp>0?"J":"P");
+  const pct=(s,m)=>Math.round((s+m)/(2*m)*100);
+  const dims=[["Extraversion","Introversion",pct(ei,2)],["Intuition","Sensing",pct(sn,2)],["Thinking","Feeling",pct(tf,4)],["Judging","Perceiving",pct(jp,2)]];
+  let soc=0;for(let i=1;i<=15;i++)soc+=a(i);
+  const sp=Math.round((soc+30)/60*100);
+  const g=grp(code),d=T[code],c=COL[g];
+  const st=sp>=70?"You’re tuned in to how society, culture and groups shape people.":sp>=45?"You see social influence as one factor among several.":"You tend to see people’s choices as more personal than social.";
+  $("result").innerHTML=`
+  <div class="rcard" style="--c:${c}"><div class="em">${d[1]}</div><div class="who">${nick?nick+", you are":"You are"}</div>
+   <div class="code">${code}</div><div class="nm">The ${d[0]}</div><div class="role">${ROLE[g]}</div><div>${d[2]}</div></div>
+  <div class="panel"><h3>💪 Your strengths</h3><div class="chips">${d[3].map(x=>`<span class="chip s">${x}</span>`).join("")}</div>
+   <h3 style="margin-top:14px">🌧️ Watch out for</h3><div class="chips">${d[4].map(x=>`<span class="chip w">${x}</span>`).join("")}</div></div>
+  <div class="panel"><h3>🧭 Careers that may suit you</h3>${d[5]}</div>
+  <div class="panel"><h3>📊 How your answers leaned</h3>${dims.map(x=>`<div class="dim"><div class="l"><span>${x[0]} ${x[2]}%</span><span>${x[1]} ${100-x[2]}%</span></div><div class="t"><div class="a" style="width:${x[2]}%"></div></div></div>`).join("")}
+   <p style="color:var(--mute);font-size:.85rem;margin:8px 0 0">Exactly neutral answers lean towards I, S, F and P.</p></div>
+  <div class="panel"><h3>🌍 Social awareness: ${sp}%</h3>${st}</div>
+  <div class="panel"><h3>🗺️ All 16 types</h3><div class="grid">${Object.keys(T).map(o=>`<div class="${o==code?"me":""}" style="--c:${COL[grp(o)]}"><b>${o}</b>${T[o][1]} ${T[o][0]}</div>`).join("")}</div></div>
+  <p style="text-align:center;margin-top:20px"><button class="btn" id="again">Play again 🔁</button></p>
+  <p id="saveStatus" class="hint" style="text-align:center"></p>`;
+  $("again").onclick=()=>{idx=0;ans=Array(20).fill(null);$("nick").value="";show("start")};
+  show("result");confetti(c);save(code);
+}
+function confetti(base){
+  if(matchMedia("(prefers-reduced-motion:reduce)").matches)return;
+  const cv=$("cv"),x=cv.getContext("2d");cv.width=innerWidth;cv.height=innerHeight;
+  const cols=[base,"#ff8ab3","#7c5cff","#ffd166","#4dd4ac"];
+  const P=Array.from({length:110},()=>({x:Math.random()*cv.width,y:-20-Math.random()*cv.height*.5,r:4+Math.random()*6,vy:2+Math.random()*4,vx:-1.5+Math.random()*3,c:cols[Math.random()*5|0],a:Math.random()*6}));
+  let f=0;(function loop(){x.clearRect(0,0,cv.width,cv.height);P.forEach(p=>{p.y+=p.vy;p.x+=p.vx+Math.sin(p.a+=.08);x.fillStyle=p.c;x.fillRect(p.x,p.y,p.r,p.r*1.6)});
+   if(++f<170)requestAnimationFrame(loop);else x.clearRect(0,0,cv.width,cv.height)})();
+}
+// Save the submission through the server. Response totals are only returned to the authenticated owner dashboard.
+async function save(code){
+  if(saved)return;saved=true;
+  const status=$("saveStatus") || $("publicSaveStatus");
+  if(status)status.textContent="Saving your response…";
+  try{
+    const response=await fetch("/api/submissions",{method:"POST",headers:{"Content-Type":"application/json","Accept":"application/json"},body:JSON.stringify({name:nick,type:code})});
+    if(!response.ok)throw new Error("Submission rejected");
+    if(status)status.textContent="✅ Your response was saved.";
+  }catch(error){
+    saved=false;
+    if(status)status.textContent="Could not save your response. Please check your connection and try again.";
+  }
+}
+</script>
+</body>
+</html>

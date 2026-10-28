@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Personality Quest Â· Owner Dashboard</title>
+  <style>
+    :root{font-family:system-ui,sans-serif;color:#25203f;background:#f5f3ff}*{box-sizing:border-box}body{margin:0;padding:24px}.wrap{max-width:980px;margin:auto}.card{background:white;border-radius:18px;padding:22px;margin:16px 0;box-shadow:0 8px 24px #30274d18}h1{margin:0 0 6px}.muted{color:#706a91}label{display:block;font-weight:700;margin:14px 0 6px}input{width:100%;max-width:420px;padding:12px;border:2px solid #ddd8fa;border-radius:10px;font:inherit}button{padding:11px 18px;border:0;border-radius:10px;background:#7057ff;color:white;font-weight:700;cursor:pointer}.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}.stat b{display:block;font-size:2rem}.bar{height:10px;background:#ebe8ff;border-radius:999px;overflow:hidden}.bar i{display:block;height:100%;background:#7057ff}table{border-collapse:collapse;width:100%}th,td{text-align:left;padding:10px;border-bottom:1px solid #eceaf6}td:nth-child(1){width:40%}#login{max-width:520px;margin:10vh auto}[hidden]{display:none!important}.error{color:#b42318}
+  </style>
+</head>
+<body>
+  <main id="login" class="card">
+    <h1>Owner sign in</h1><p class="muted">This page is private. Your password is never displayed in the form or URL.</p>
+    <form id="loginForm"><label for="password">Admin password</label><input id="password" type="password" autocomplete="current-password" required><p id="loginError" class="error"></p><button type="submit">Sign in</button></form>
+  </main>
+  <main id="dashboard" class="wrap" hidden>
+    <div class="card"><h1>Personality Quest responses</h1><p class="muted">Private owner data Â· <button id="logout" type="button">Sign out</button></p></div>
+    <div id="summary" class="card"></div>
+    <div class="card"><h2>Participants</h2><div style="overflow-x:auto"><table><thead><tr><th>Name</th><th>Type</th><th>Submitted</th></tr></thead><tbody id="rows"></tbody></table></div></div>
+  </main>
+<script>
+const login=document.querySelector('#login'),dashboard=document.querySelector('#dashboard');
+async function load(){
+  const r=await fetch('/api/admin/responses',{headers:{Accept:'application/json'}});
+  if(r.status===401){login.hidden=false;dashboard.hidden=true;return}
+  if(!r.ok)throw new Error('Could not load responses');
+  const data=await r.json();login.hidden=true;dashboard.hidden=false;
+  document.querySelector('#summary').innerHTML=`<div class="stats"><div class="stat"><b>${data.total}</b><span>Total submissions</span></div><div class="stat"><b>${data.uniqueNames}</b><span>Unique names</span></div></div><h3>Personality types</h3>${data.types.map(x=>`<div style="margin:10px 0"><b>${x.type}</b> Â· ${x.count}<div class="bar"><i style="width:${x.count/data.total*100}%"></i></div></div>`).join('')}`;
+  document.querySelector('#rows').innerHTML=data.responses.map(x=>`<tr><td>${escapeHtml(x.name||'Anonymous')}</td><td>${escapeHtml(x.type)}</td><td>${new Date(x.submittedAt).toLocaleString()}</td></tr>`).join('')||'<tr><td colspan="3">No submissions yet.</td></tr>';
+}
+function escapeHtml(v){const d=document.createElement('div');d.textContent=v;return d.innerHTML}
+document.querySelector('#loginForm').addEventListener('submit',async e=>{e.preventDefault();const password=document.querySelector('#password').value;const r=await fetch('/api/admin/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({password})});if(r.ok){document.querySelector('#password').value='';load()}else document.querySelector('#loginError').textContent='Incorrect password.'});
+document.querySelector('#logout').onclick=async()=>{await fetch('/api/admin/logout',{method:'POST'});location.reload()};
+load().catch(()=>document.querySelector('#loginError').textContent='Could not reach the server.');
+</script>
+</body>
+</html>
