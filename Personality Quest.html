@@ -77,7 +77,7 @@ input[type=text]:focus{outline:3px solid var(--p);border-color:var(--p)}
 <main>
 <section id="start" class="screen on">
   <div class="hero"><span class="big">🔮</span><h1>Personality Quest</h1>
-  <p class="lead">20 quick questions about you and the world around you. Tap the face that fits best, and discover which of 16 personality types you are!</p></div>
+  <p class="lead">12 quick questions about you and the world around you. Tap the face that fits best, and discover which of 16 personality types you are!</p></div>
   <div class="card">
     <label class="nick" for="nick">What should we call you?</label>
     <input type="text" id="nick" maxlength="20" placeholder="Your first name or a nickname" autocomplete="off">
@@ -88,7 +88,7 @@ input[type=text]:focus{outline:3px solid var(--p);border-color:var(--p)}
 </section>
 
 <section id="quiz" class="screen">
-  <div class="top"><div class="track"><div class="fill" id="fill"></div><span class="rocket" id="rocket">🚀</span></div><div class="cnt" id="cnt">1/20</div></div>
+  <div class="top"><div class="track"><div class="fill" id="fill"></div><span class="rocket" id="rocket">🚀</span></div><div class="cnt" id="cnt">1/12</div></div>
   <div class="card q" id="qcard"></div>
   <div class="nav"><button class="btn alt" id="back">← Back</button></div>
 </section>
@@ -100,7 +100,7 @@ input[type=text]:focus{outline:3px solid var(--p);border-color:var(--p)}
 <script>
 const SOC=["You think people often behave differently when they are in a group than when they are alone.","Your family and upbringing influence many of the choices you make.","You sometimes adopt habits, expressions, or trends because people around you use them.","You think people can have very different views of the same situation because of their backgrounds.","Social media influences what people consider popular or acceptable.","You believe the people someone spends time with can influence their choices over time.","You sometimes change how you express yourself depending on whom you are talking to.","Traditions and cultural practices influence how people live their everyday lives.","You think people are sometimes judged unfairly because of their background or social status.","When joining a new group, you tend to observe how people behave before becoming comfortable.","You enjoy understanding why certain trends become popular in some communities.","You think society’s expectations can influence the careers and lifestyles people choose.","You believe that people in a community depend on one another more than they realise.","When a group makes a decision, the opinions of a few influential people can affect everyone else.","You think people should have equal opportunities regardless of their social background."];
 const PSY=["When solving a problem, you usually prefer logical reasoning over creative brainstorming.","You feel more energised after spending time with other people than after spending time alone.","When learning something new, you are more interested in possibilities and imaginative ideas than practical details.","When making an important decision, you give greater importance to people’s feelings than to purely logical analysis.","You prefer to plan your activities in advance rather than go with the flow."];
-const Q=SOC.map(t=>({t,p:0})).concat(PSY.map(t=>({t,p:1})));
+const Q=SOC.slice(0,5).concat(SOC.slice(5,6),SOC.slice(14,15)).map(t=>({t,p:0})).concat(PSY.map(t=>({t,p:1})));
 const PART=[["🌍 Part 1: Society Explorer","#ffd6e7"],["🧠 Part 2: Inner You","#cfe8ff"]];
 const FACES=["🤩","🙂","😐","🙁","😖"],LABELS=["Strongly agree","Agree","Neutral","Disagree","Strongly disagree"],VAL=[2,1,0,-1,-2],SZ=["2.9rem","2.4rem","2rem","2.4rem","2.9rem"];
 const COL={NF:"#8fdc7f",NT:"#7cc4f0",SF:"#f7e05a",ST:"#f4956d"},ROLE={NF:"Diplomat / Idealist",NT:"Analyst / Rational",SF:"Helper / Caretaker",ST:"Doer / Organiser"};
@@ -124,14 +124,14 @@ ISTJ:["Inspector","🐜","Does what should be done. Great at finishing practical
 ESTJ:["Supervisor","🐝","A pillar of the community: loyal, dependable and orderly, often in charge.",["Dedicated","Direct","Loyal"],["Inflexible","Judgmental"],"Management, administration, finance, law"]};
 const $=id=>document.getElementById(id);
 const grp=c=>c[1]=="N"?(c[2]=="F"?"NF":"NT"):(c[2]=="F"?"SF":"ST");
-let idx=0,ans=Array(20).fill(null),nick="",saved=false;
+let idx=0,ans=Array(Q.length).fill(null),nick="",saved=false;
 function show(id){document.querySelectorAll(".screen").forEach(s=>s.classList.toggle("on",s.id==id));window.scrollTo(0,0)}
 function renderQ(){
   const q=Q[idx],p=PART[q.p];
   $("qcard").classList.remove("out");
   $("qcard").innerHTML=`<span class="part" style="--pc:${p[1]}">${p[0]}</span><h2>${q.t}</h2><div class="faces">`+
    FACES.map((f,i)=>`<button class="face${ans[idx]===VAL[i]?" sel":""}" data-i="${i}" aria-label="${LABELS[i]}"><span style="font-size:${SZ[i]}">${f}</span><small>${LABELS[i]}</small></button>`).join("")+`</div>`;
-  const pc=idx/20*100;$("fill").style.width=pc+"%";$("rocket").style.left=pc+"%";$("cnt").textContent=(idx+1)+"/20";
+  const pc=idx/Q.length*100;$("fill").style.width=pc+"%";$("rocket").style.left=pc+"%";$("cnt").textContent=(idx+1)+"/"+Q.length;
   $("back").style.visibility=idx?"visible":"hidden";
 }
 $("qcard").addEventListener("click",e=>{
@@ -139,12 +139,12 @@ $("qcard").addEventListener("click",e=>{
   ans[idx]=VAL[+b.dataset.i];
   document.querySelectorAll(".face").forEach(x=>x.classList.toggle("sel",x===b));
   setTimeout(()=>{
-    if(idx<19){$("qcard").classList.add("out");setTimeout(()=>{idx++;renderQ()},230)}
+    if(idx<Q.length-1){$("qcard").classList.add("out");setTimeout(()=>{idx++;renderQ()},230)}
     else finish();
   },260);
 });
 $("back").onclick=()=>{if(idx){idx--;renderQ()}};
-$("begin").onclick=()=>{nick=$("nick").value.trim();idx=0;ans=Array(20).fill(null);saved=false;show("quiz");renderQ()};
+$("begin").onclick=()=>{nick=$("nick").value.trim();idx=0;ans=Array(Q.length).fill(null);saved=false;show("quiz");renderQ()};
 function finish(){
   $("fill").style.width="100%";$("rocket").style.left="100%";
   show("decode");
@@ -154,12 +154,15 @@ function finish(){
 }
 function result(){
   const a=n=>ans[n-1];
-  const ei=a(17),sn=a(18),tf=a(16)-a(19),jp=a(20);
+  const personalityStart=Q.length-PSY.length+1;
+  const logical=a(personalityStart),ei=a(personalityStart+1),sn=a(personalityStart+2),feeling=a(personalityStart+3),jp=a(personalityStart+4);
+  const tf=logical-feeling;
   const code=(ei>0?"E":"I")+(sn>0?"N":"S")+(tf>0?"T":"F")+(jp>0?"J":"P");
   const pct=(s,m)=>Math.round((s+m)/(2*m)*100);
   const dims=[["Extraversion","Introversion",pct(ei,2)],["Intuition","Sensing",pct(sn,2)],["Thinking","Feeling",pct(tf,4)],["Judging","Perceiving",pct(jp,2)]];
-  let soc=0;for(let i=1;i<=15;i++)soc+=a(i);
-  const sp=Math.round((soc+30)/60*100);
+  let soc=0;for(let i=1;i<=Q.length-PSY.length;i++)soc+=a(i);
+  const socialQuestionCount=Q.length-PSY.length;
+  const sp=Math.round((soc+2*socialQuestionCount)/(4*socialQuestionCount)*100);
   const g=grp(code),d=T[code],c=COL[g];
   const st=sp>=70?"You’re tuned in to how society, culture and groups shape people.":sp>=45?"You see social influence as one factor among several.":"You tend to see people’s choices as more personal than social.";
   $("result").innerHTML=`
@@ -174,7 +177,7 @@ function result(){
   <div class="panel"><h3>🗺️ All 16 types</h3><div class="grid">${Object.keys(T).map(o=>`<div class="${o==code?"me":""}" style="--c:${COL[grp(o)]}"><b>${o}</b>${T[o][1]} ${T[o][0]}</div>`).join("")}</div></div>
   <p style="text-align:center;margin-top:20px"><button class="btn" id="again">Play again 🔁</button></p>
   <p id="saveStatus" class="hint" style="text-align:center"></p>`;
-  $("again").onclick=()=>{idx=0;ans=Array(20).fill(null);$("nick").value="";show("start")};
+  $("again").onclick=()=>{idx=0;ans=Array(Q.length).fill(null);$("nick").value="";show("start")};
   show("result");confetti(c);save(code);
 }
 function confetti(base){
